@@ -3,13 +3,13 @@ if TypefunS == 1
 Sko = max(X,Y);
 end
 if TypefunS == 2
-  Sko = 1-(1-Y)*(1-X)/(1-Y*X);
+  Sko = 1-(1-Y).*(1-X)./(1-Y.*X);
 end
 if TypefunS == 3
- Sko = 1-(1-Y)*(1-X);   
+ Sko = 1-(1-Y).*(1-X);   
 end
 if TypefunS == 4
-   Sko = 1-(1-Y)*(1-X)/(1+Y*X);
+   Sko = 1-(1-Y).*(1-X)./(1+Y.*X);
 end
 if TypefunS == 5
     d = X+Y;
