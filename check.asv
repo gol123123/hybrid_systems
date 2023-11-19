@@ -1,0 +1,8 @@
+ x=0:1:200; % в наносекундах
+ a = x(1);
+ b = x(round(length(x)/2));
+ c = x(end); 
+ MF = @trimf
+ param = [a b c];
+
+ [out]=Mfneuron(x,MF,param)
