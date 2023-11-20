@@ -1,8 +1,7 @@
-function [out]=Mfneuronrev(x,MF, lever)
-    if nargin < 3
-        a = round(length(x)/2);
-        lever = [x(1) x(a) x(end)];
-    end
+function [mfneuronrev]=Mfneuronrev(level,MF)
+    
+mfneuronrev.MF = MF;
+mfneuronrev.level = level;
 
-out = MF(x, lever);
+mfneuronrev.calculateValue = @(level) neuron.MF(level);
 end

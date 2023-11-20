@@ -1,12 +1,12 @@
 function [Tn] = Tnorm(X,Y, TypefunT)
 if TypefunT == 1
-mx = max(X,Y);
-if mx<1
-    Tnor = 0;
-end
-if mx == 1
-    Tnor = min(X,Y);
-end
+    mx = max(X,Y);
+    if mx<1
+        Tnor = 0;
+    end
+    if mx == 1
+        Tnor = min(X,Y);
+    end
 end
 if TypefunT == 2
     s=0;

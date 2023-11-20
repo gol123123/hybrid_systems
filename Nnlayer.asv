@@ -1,15 +1,17 @@
 function [obj]=Nnlayer(N,Xn,Mlinlnm)
-    
     obj.N = N;
     obj.Mlinlnm = Mlinlnm;
     obj.Xn = Xn;
-    obj.Nneuron = @Nneuron;
+    
     for i=1:N
         obj.input(i,:) =  obj.Xn(i)*obj.Mlinlnm(i,:);
+        obj.Nneuron{i} = @Nneuron;
     end
     for i=1:obj.N
-       output = obj.Nneuron(obj.input(i,:),obj.input(i,i));
-       obj.output(i) = output;
+       for j=1:obj.N
+            obj.Nneuron{i}(obj.input(i),obj.input);
+       end
+       obj.output(i) =
     end
 end
 
