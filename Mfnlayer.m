@@ -1,4 +1,4 @@
-function [Z]=Mfnlayer(N, Xn, MFn, param)
+function [mfnlayer]=Mfnlayer(N, Xn, MFn, param)
 Size = length(MFn)/2;
 
 for i=1:Size
