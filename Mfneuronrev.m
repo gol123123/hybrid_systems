@@ -1,7 +1,18 @@
-function [mfneuronrev]=Mfneuronrev(level,MF)
-    
-mfneuronrev.MF = MF;
-mfneuronrev.level = level;
+classdef Mfneuronrev
+  properties
+    level    =0;
+    MF       =0;
+    Xout      =0;
+  end
 
-mfneuronrev.calculateValue = @(level) neuron.MF(level);
+  methods
+      function obj = Mfrevinit(obj,level, MF)% инициализация нейрона
+      obj.MF       = MF;         % вектор значений
+      obj.level    = level;   % тип канормы
+    end %function
+    
+    function obj = mfneuronrev(obj)
+        obj.Xout = obj.MF(obj.level);
+    end %function
+  end
 end

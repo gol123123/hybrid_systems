@@ -1,8 +1,11 @@
-classdef Mfneuron
+function [out]=Nneuron(Slinkn,signal)
+out = signal/sum(Slinkn);
+end
+
+classdef Nneuron
   properties
-    Xn       =0;
-    param    =0;
-    MF       =0;
+    Slinkn   =0;
+    signal   =0;
     out      =0;
   end
 

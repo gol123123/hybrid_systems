@@ -10,7 +10,7 @@ classdef Andneuron
   end
 
   methods
-      function obj = init(obj,W,Xn,TypefunS,TypefunT)% инициализация нейрона
+      function obj = andinit(obj,W,Xn,TypefunS,TypefunT)% инициализация нейрона
       [obj.W]        = W;          % вес
       obj.Xn       = Xn;         % вектор значений
       obj.TypefunS = TypefunS;   % тип канормы
