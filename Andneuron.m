@@ -1,11 +1,34 @@
-function [and]=Andneuron(W,Xn,TypefunS,TypefunT)
-and.N = length(Xn);
-and.W = W;
-and.Xn = Xn;
-and.TypefunS = TypefunS;
-and.TypefunT = TypefunT;
+classdef Andneuron
+  properties
+    N        =0;
+    W        =0;
+    Xn       =0;
+    TypefunS =0;
+    TypefunT =0;
+    S        =cell(1);
+    out      =0;
+  end
 
-and.S1= Snorm(and.W(1),and.Xn(1),and.TypefunS);
-and.S2= Snorm(and.W(2),and.Xn(2),and.TypefunS);
-and.out = Tnorm(and.S1,and.S2, and.TypefunT);
+  methods
+      function obj = init(obj,W,Xn,TypefunS,TypefunT)% инициализация нейрона
+      [obj.W]        = W;          % вес
+      obj.Xn       = Xn;         % вектор значений
+      obj.TypefunS = TypefunS;   % тип канормы
+      obj.TypefunT = TypefunT;   % тип нормы   
+      obj.N        = length(Xn); % длинна вектора
+    end %function
+
+    function obj = andneuron(obj)
+        for i=1:obj.N
+            obj.S{i}= Snorm(obj.W(i),obj.Xn(i),obj.TypefunS);
+        end
+        res = Tnorm(obj.S{1},obj.S{2}, obj.TypefunT);
+        if(obj.N > 2)
+            for i=3:obj.N
+                res = Tnorm(res,obj.S{i}, obj.TypefunT);;
+            end
+        end
+        obj.out = res;
+    end %function
+  end
 end

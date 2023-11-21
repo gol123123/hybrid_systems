@@ -25,5 +25,8 @@ end
 if TypefunT == 6
     Tnor = min(X,Y);
 end
+if TypefunT == 7
+    Tnor = min(X);
+end
 Tn = Tnor;
 end

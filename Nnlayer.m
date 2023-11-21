@@ -13,3 +13,4 @@ function [obj]=Nnlayer(N,Xn,Mlinlnm)
     end
 end
 
+anfis

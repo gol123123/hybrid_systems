@@ -24,5 +24,8 @@ if mn == 0
     Sko = max(X,Y);
 end
 end
+if TypefunS == 7
+   Sko = min(X);
+end
 Sn = Sko;
 end
