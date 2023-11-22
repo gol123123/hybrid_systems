@@ -1,87 +1,63 @@
-function [mfnlayer]=Mfnlayer(N, Xn, MFn, param)
-Size = length(MFn)/2;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%          X1 X2 X3 .. Xn    % каждому Xn соответствует %
+%%%        | A1 B1 C1 .. Z1 |  % An ФП                    %
+%%%  MFn = | A2 B2 C2 .. Z2 |  %                          %
+%%%        | .. .. .. .. .. |  %                          %
+%%%        | An Bn Cn .. Zn |  %                          %
+%%%                            %                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-for i=1:Size
-if nargin < 4
-    if(MFn(2*i)=='dsigmf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(1) Xn(b) Xn(a) Xn(end)];  end
-    else if(MFn(2*i)=='gauss2mf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(1) Xn(b) Xn(a) Xn(end)];      end 
-    else if(MFn(2*i)=='gaussmf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(b) Xn(a)];      end  
-    else if(MFn(2*i)=='gbellmf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(1) Xn(a) Xn(end)];  end
-    else if(MFn(2*i)=='pimf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(1) Xn(b) Xn(a) Xn(end)]; end 
-    else if(MFn(2*i)=='psigmf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(1) Xn(b) Xn(a) Xn(end)];  end
-    else if(MFn(2*i)=='sigmf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(b) Xn(a)];  end
-    else if(MFn(2*i)=='smf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(b) Xn(a)];   end
-    else if(MF(2*i)=='trapmf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(1) Xn(b) Xn(a) Xn(end)];  end
-    else if(MFn(2*i)=='trimf')
-     a = round(length(x)/2);
-     param{i} = [x(1) x(a) x(end)]; end
-    else if(MFn(2*i)=='zmf')
-     a = round(length(Xn)/2);
-     b = round(length(Xn)/4);
-     param{i} = [Xn(b) Xn(a)];  
-     end
-end
-end
+classdef Mfnlayer
+  properties
+    N        = 0;
+    Xn       = 0;
+    MFn      = 0;
+    param    = 0;
+    mfneuron = cell(1,1);
+    out = 0;
+  end
 
-mfnlayer.N  = N;
-mfnlayer.Xn  = Xn;
-mfnlayer.MFn  = MFn;
-mfnlayer.param = param;
-k = 0;
-for i=1:Size
-    for j=1:MFn(2*i-1)
-        k = k+1;
-        if(MFn(2*i)=='dsigmf')
-          mfnlayer.mfn(k)  = dsigmf(Xn(k),param{i});  
-        else if(MFn(2*i)=='gauss2mf')
-          mfnlayer.mfn(k)  = gauss2mf(Xn(k),param{i});      
-        else if(MFn(2*i)=='gaussmf')
-          mfnlayer.mfn(k) = gaussmf(Xn(k),param{i});      
-        else if(MFn(2*i)=='gbellmf')
-          mfnlayer.mfn(k) = gbellmf(Xn(k),param{i}); 
-        else if(MFn(2*i)=='pimf')
-          mfnlayer.mfn(k) = pimf(Xn(k),param{i}); 
-        else if(MFn(2*i)=='psigmf')
-          mfnlayer.mfn(k)  = psigmf(Xn(k),param{i}); 
-        else if(MFn(2*i)=='sigmf')
-          mfnlayer.mfn(k)  = sigmf(Xn(k),param{i}); 
-        else if(MFn(2*i)=='smf')
-          mfnlayer.mfn(k)  = smf(Xn(k),param{i}); 
-        else if(MFn(2*i)=='trapmf')
-          mfnlayer.mfn(k) = trapmf(Xn(k),param{i}); 
-        else if(MFn(2*i)=='trimf')
-          mfnlayer.mfn(k) = trimf(Xn(k),param{i}); 
-        else if(MFn(2*i)=='zmf')
-          mfnlayer.mfn(k) = zmf(Xn(k),param{i}); 
+  methods
+      function obj = mfnlayerinit(obj,N, Xn, MFn, param)% инициализация нейрона
+      obj.N       = N;        % количество фп для одной переменной
+      obj.Xn      = Xn;       % значение переменной
+      obj.MFn     = MFn;      % функции принадлежности
+      obj.param   = param;    % параметры для функций принадлежности
+      
+      for nX=1:length(obj.Xn)
+          for nMF=1:obj.N
+              neuron = Mfneuron;
+              obj.mfneuron{nMF,nX} = neuron;
+              obj.mfneuron{nMF,nX} = mfinit(obj.mfneuron{nMF,nX},obj.Xn(nX),obj.MFn{nMF,nX}, param{nMF,nX});
+          end
+      end
+    end %function
+    
+    function obj = mfnlayerStart(obj,Xn)
+        if nargin < 2
+        Xn = obj.Xn; % По умолчанию, если S не задан.
+        else
+        obj.Xn = Xn;
         end
-    end
+        
+        for nX=1:length(obj.Xn)
+          for nMF=1:obj.N
+              obj.mfneuron{nMF,nX} = mfneuron(obj.mfneuron{nMF,nX},obj.Xn(nX));
+              obj.out(nMF,nX) = obj.mfneuron{nMF,nX}.out;
+          end
+        end     
+    end %function
+    
+    function mfnlayerplot(obj)
+        for nX=1:length(obj.Xn)
+            for nMF=1:obj.N
+                mfPlot(obj.mfneuron{nMF,nX});
+                hold on
+            end
+            figure(nX+1);
+        end
+    end %function
+  end
 end
-k = 0;
-end
+
+

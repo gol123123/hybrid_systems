@@ -18,7 +18,14 @@ classdef Orneuron
       obj.N        = length(Xn); % длинна вектора
     end %function
 
-    function obj = orneuron(obj)
+    function obj = orneuron(obj,Xn)
+        if nargin < 2
+        Xn = obj.Xn; % По умолчанию, если S не задан.
+        else
+        obj.Xn = Xn;
+        obj.N  = length(Xn); % длинна вектора
+        end
+        
         for i=1:obj.N
             obj.S{i}= Tnorm(obj.W(i),obj.Xn(i),obj.TypefunT);
         end

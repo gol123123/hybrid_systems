@@ -13,12 +13,15 @@ classdef Mfneuron
       obj.param    = param;   % тип канормы
     end %function
     
-    function obj = mfneuron(obj)
-        obj.out = obj.MF(obj.Xn, obj.param);
+    function obj = mfneuron(obj,Xn)
+        if nargin < 2
+        Xn = obj.Xn; % По умолчанию, если S не задан.
+        end
+        obj.out = obj.MF(Xn, obj.param);
     end %function
     
     function mfPlot(obj)
-        x = 0:0.1:10;
+        x = 0:0.1:20;
         plot(x, obj.MF(x, obj.param));
     end %function
   end

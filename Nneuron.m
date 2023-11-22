@@ -1,7 +1,3 @@
-function [out]=Nneuron(Slinkn,signal)
-out = signal/sum(Slinkn);
-end
-
 classdef Nneuron
   properties
     Slinkn   =0;
@@ -15,7 +11,11 @@ classdef Nneuron
       obj.Slinkn   = Slinkn;         % вектор значений
     end %function
     
-    function obj = Nneuron(obj)
+    function obj = nneuron(obj,signal)
+        if nargin < 2
+        signal = obj.signal; % По умолчанию, если S не задан.
+        end
+        obj.signal = signal;
         obj.out = obj.signal/sum(obj.Slinkn);
     end %function
   end

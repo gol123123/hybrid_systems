@@ -24,12 +24,12 @@ classdef Andnlayer
       function obj = andnlayerinit(obj,W,in, Mlinlnm,TypefunTS)% инициализация нейрона
           obj.W       = W;               % количество фп для одной переменной
           obj.in      = in;              % количество фп для одной переменной
-          obj.M       = size(in);        % количество фп для одной переменной
+          obj.M       = size();               % количество фп для одной переменной
           obj.Mlinlnm = Mlinlnm;         % значение переменной
           obj.TypefunS= TypefunTS(1);    % параметры для функций принадлежности
-          obj.TypefunT= TypefunTS(2);    % параметры для функций принадлежности
+          obj.TypefunT= TypefunTS(1);    % параметры для функций принадлежности
           
-          for nAND=1:obj.M(1)
+          for nAND=1:obj.M
               neuron = Andneuron;
               obj.andn{nAND} = neuron;
               obj.andn{nAND} = andinit(obj.andn{nAND},...
