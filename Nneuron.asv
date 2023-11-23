@@ -14,11 +14,8 @@ classdef Nneuron
     function obj = nneuronstart(obj,signal,Slinkn)
         if nargin < 2
         signal = obj.signal; % По умолчанию, если S не задан.
-        Slinkn = obj.Slinkn;
-        else
-          obj.signal =  signal;
-          obj.Slinkn =  Slinkn;
         end
+        obj.signal = signal;
         obj.out = obj.signal/sum(obj.Slinkn);
     end %function
   end

@@ -25,11 +25,11 @@ classdef Orneuron
         obj.Xn = Xn;
         obj.N  = length(Xn); % длинна вектора
         end
-        
+         in = obj.W.*obj.Xn;
         for i=1:obj.N
-            obj.S{i}= Tnorm(obj.W(i),obj.Xn(i),obj.TypefunT);
+            obj.S{i}= Tnorm(in(i),in(i),obj.TypefunT);
         end
-        res = Snorm(obj.S{1},obj.S{2}, obj.TypefunS);
+         res = Snorm(obj.S{1},obj.S{2}, obj.TypefunS);
         if(obj.N > 2)
             for i=3:obj.N
                 res = Snorm(res,obj.S{i}, obj.TypefunS);

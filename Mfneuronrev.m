@@ -12,7 +12,7 @@ classdef Mfneuronrev
     end %function
     
     function obj = mfneuronrev(obj)
-        obj.Xout = obj.MF(obj.level);
+        obj.Xout = defuzz(obj.level,mf,'centroid');
     end %function
   end
 end

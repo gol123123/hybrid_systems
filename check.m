@@ -63,5 +63,22 @@ AND_layer = andnlayerinit(AND_layer,x_and, W, TypefunTS);% инициализа�
 AND_layer = andnlayerStart(AND_layer);% инициализация нейрона
 AND_layer.out
 
+%% Ornlayer test
+x_and = mf_layer.out;
+W = [1    1
+     0.1    0.1];
+TypefunTS = [1 6];
 
+OR_layer = Ornlayer;
+OR_layer = ornlayerinit(OR_layer,x_and, W, TypefunTS);% инициализация нейрона
+OR_layer = ornlayerStart(OR_layer);% инициализация нейрона
+OR_layer.out
+%% Nnlayer test
+N_in = AND_layer.out;
+W = [1    1
+     0.1    0.1];
+N_layer = Nnlayer;
+N_layer = nnlayerinit(N_layer,N_in, W);% инициализация нейрона
+N_layer = nnlayerStart(N_layer,N_in);% инициализация нейрона
+N_layer.out
 
