@@ -21,8 +21,7 @@ classdef Andnlayer
   end
 
   methods
-      function obj = andnlayerinit(obj,W,in, Mlinlnm,TypefunTS)% инициализация нейрона
-          obj.W       = W;               % количество фп для одной переменной
+      function obj = andnlayerinit(obj,in, Mlinlnm,TypefunTS)% инициализация нейрона
           obj.in      = in;              % количество фп для одной переменной
           obj.M       = size(in);        % количество фп для одной переменной
           obj.Mlinlnm = Mlinlnm;         % значение переменной
@@ -32,10 +31,10 @@ classdef Andnlayer
           for nAND=1:obj.M(1)
               neuron = Andneuron;
               obj.andn{nAND} = neuron;
-              obj.andn{nAND} = andinit(obj.andn{nAND},...
-                                           obj.W(nAND,:),     ...
-                                           obj.in(nAND,:),    ...
-                                           obj.TypefunS,      ...
+              obj.andn{nAND} = andinit(obj.andn{nAND},           ...
+                                           obj.Mlinlnm(nAND,:),  ...
+                                           obj.in(nAND,:),       ...
+                                           obj.TypefunS,         ...
                                            obj.TypefunT);
           end
       end %function
@@ -48,7 +47,7 @@ classdef Andnlayer
         end
         
           for nAND=1:obj.M
-              obj.andn{nAND} = andneuron(obj.andn{nAND},obj.in)
+              obj.andn{nAND} = andneuron(obj.andn{nAND},obj.in(nAND,:))
               obj.out(nAND) = obj.andn{nAND}.out;
           end     
     end %function

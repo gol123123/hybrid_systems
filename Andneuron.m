@@ -26,8 +26,9 @@ classdef Andneuron
         obj.N  = length(Xn); % длинна вектора
         end
         
+        in = obj.W.*obj.Xn;
         for i=1:obj.N
-            obj.S{i}= Snorm(obj.W(i),obj.Xn(i),obj.TypefunS);
+            obj.S{i}= Snorm(in(i),in(i),obj.TypefunS);
         end
         res = Tnorm(obj.S{1},obj.S{2}, obj.TypefunT);
         if(obj.N > 2)

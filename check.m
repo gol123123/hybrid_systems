@@ -55,11 +55,13 @@ mfnlayerplot(mf_layer)
 %% Andnlayer test
 x_and = mf_layer.out;
 
-W = [0.1    0.1
-     1    1];
+W = [1    1
+     0.1    0.1];
 TypefunTS = [1 6];
 AND_layer = Andnlayer;
-AND_layer = andnlayerinit(AND_layer,W, x_and, W, TypefunTS);% инициализация нейрона
+AND_layer = andnlayerinit(AND_layer,x_and, W, TypefunTS);% инициализация нейрона
 AND_layer = andnlayerStart(AND_layer);% инициализация нейрона
 AND_layer.out
+
+
 
