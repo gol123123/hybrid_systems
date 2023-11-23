@@ -81,4 +81,26 @@ N_layer = Nnlayer;
 N_layer = nnlayerinit(N_layer,N_in, W);% инициализация нейрона
 N_layer = nnlayerStart(N_layer,N_in);% инициализация нейрона
 N_layer.out
+%% 
+x = 0:0.00001:10;
+mfneurev = Mfneuronrev;
+mfneurev = Mfrevinit(mfneurev,0.5,@trimf,[2 3 6]);
+mfneurev = mfneuronrev(mfneurev,x,0.3);
+mfneurev.out
 
+mf = trimf(x,[2 3 6]);
+plot(x,mf)
+
+%% Mfrevnlayer test
+MFREV_in = N_in;
+Mf = {@sigmf
+      @sigmf}; 
+  
+param = {[0 6]
+         [2   9]};
+range = 0:0.0001:10;     
+MFREV_layer = Mfrevnlayer;
+MFREV_layer = mfrevnlayerinit(MFREV_layer,MFREV_in, Mf,param,range);% инициализация нейрона
+MFREV_layer = mfrevnlayerStart(MFREV_layer,MFREV_in);% инициализация нейрона
+MFREV_layer.out
+Y = sum(MFREV_layer.out .* N_layer.out)
