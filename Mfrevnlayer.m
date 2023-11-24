@@ -19,21 +19,26 @@ classdef Mfrevnlayer
   end
 
   methods
-      function obj = mfrevnlayerinit(obj, Xn, MFn, param,range)% инициализация нейрона
+      function obj = mfrevnlayerinit(obj,N, Xn, MFn, param,range)% инициализация нейрона
         if nargin < 4
         range = -20:0.01:20; % По умолчанию, если S не задан.
         end
         
-      obj.N       = length(Xn);   % количество фп для одной переменной
+      obj.N       = N;            % количество фп для одной переменной
       obj.Xn      = Xn;           % значение переменной
       obj.MFn     = MFn;          % функции принадлежности
       obj.param   = param;        % параметры для функций принадлежности
       obj.range   = range;        % параметры для функций принадлежности
-      for nX=1:obj.N
-          neuron = Mfneuronrev;
-          obj.mfrevneuron{nX} = neuron;
-          obj.mfrevneuron{nX} = Mfrevinit(obj.mfrevneuron{nX},obj.Xn(nX),obj.MFn{nX},obj.param{nX});
+      
+      for nX=1:length(obj.Xn)
+          for nMF=1:obj.N
+              neuron = Mfneuronrev;
+              obj.mfrevneuron{nMF,nX} = neuron;
+              
+              obj.mfrevneuron{nMF,nX} = Mfrevinit(obj.mfrevneuron{nMF,nX},obj.Xn(nX),obj.MFn{nMF,nX},obj.param{nMF,nX});
+          end
       end
+      obj.out =  zeros(obj.N,length(obj.Xn));
     end %function
     
     function obj = mfrevnlayerStart(obj,Xn)
@@ -42,11 +47,12 @@ classdef Mfrevnlayer
         else
         obj.Xn = Xn;
         end
-        
-        for nX=1:obj.N
-              obj.mfrevneuron{nX} = mfneuronrev(obj.mfrevneuron{nX},obj.range,obj.Xn(nX));
-              obj.out(nX) = obj.mfrevneuron{nX}.out;
-        end     
+       for nX=1:length(obj.Xn)  
+        for nMF=1:obj.N
+              obj.mfrevneuron{nMF,nX} = mfneuronrev(obj.mfrevneuron{nMF,nX},obj.range,obj.Xn(nX));
+              obj.out(nMF,nX) = obj.mfrevneuron{nMF,nX}.out;
+        end 
+       end
     end %function
   end
 end

@@ -37,6 +37,7 @@ classdef Andnlayer
                                            obj.TypefunS,         ...
                                            obj.TypefunT);
           end
+          obj.out =  zeros(1,obj.M(1));
       end %function
     
     function obj = andnlayerStart(obj,in)

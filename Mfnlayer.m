@@ -28,9 +28,10 @@ classdef Mfnlayer
           for nMF=1:obj.N
               neuron = Mfneuron;
               obj.mfneuron{nMF,nX} = neuron;
-              obj.mfneuron{nMF,nX} = mfinit(obj.mfneuron{nMF,nX},obj.Xn(nX),obj.MFn{nMF,nX}, param{nMF,nX});
+              obj.mfneuron{nMF,nX} = mfinit(obj.mfneuron{nMF,nX},obj.Xn(nX),obj.MFn{nMF,nX}, obj.param{nMF,nX});
           end
       end
+      obj.out =  zeros(obj.N);
     end %function
     
     function obj = mfnlayerStart(obj,Xn)

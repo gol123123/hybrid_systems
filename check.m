@@ -104,3 +104,25 @@ MFREV_layer = mfrevnlayerinit(MFREV_layer,MFREV_in, Mf,param,range);% иници
 MFREV_layer = mfrevnlayerStart(MFREV_layer,MFREV_in);% инициализация нейрона
 MFREV_layer.out
 Y = sum(MFREV_layer.out .* N_layer.out)
+
+%% ANFIS test
+Qin        = [1 2];        
+MFQin = {@gaussmf    @sigmf
+         @gaussmf    @sigmf};   
+MFQinparam = {[0.1 0.5   1 1.5] [0.1 0.5]
+              [0.4 0.8 1.3 1.9] [1   1.5]  };     
+Qout  = [0];    
+MFRQout   = {@sigmf @sigmf};      
+MFRQinparam = {[1 6] [2 9]};   
+Mand        = 2 ;    
+Mor         = 2;           
+MlinkandQinMand = [1 1
+                   1 1];
+MlinkorMandMor = [1 1
+                  1 1];  
+       
+
+net = ANFIS
+net = ANFISnet(net,Qin,MFQin,MFQinparam,Qout,MFRQout,MFRQinparam,Mand,Mor,MlinkandQinMand,MlinkorMandMor)
+net = simANFIS(net,Qin)
+net.Qout

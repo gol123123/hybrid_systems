@@ -134,17 +134,15 @@ classdef ANFIS
        
         if((obj.Typelayer == "and")|| (obj.Typelayer == "and_or"))  
         obj.AND_layer = andnlayerStart(obj.AND_layer,obj.MF_layer.out);% инициализация нейрона
-        N_in = obj.AND_layer.out;
         MFREV_in = obj.AND_layer.out;
         end
         
         if((obj.Typelayer == "or")|| (obj.Typelayer == "and_or"))
         obj.OR_layer = ornlayerStart(obj.OR_layer,obj.MF_layer.out);% инициализация нейрона
-        N_in = obj.OR_layer.out;
         MFREV_in = obj.OR_layer.out;
         end
         
-        obj.N_layer = nnlayerStart(obj.N_layer,N_in);
+        obj.N_layer = nnlayerStart()
         
         obj.MFrev_layer = mfrevnlayerStart(obj.MFrev_layer,MFREV_in);% инициализация нейрона
         

@@ -22,12 +22,13 @@ classdef Nnlayer
       obj.Xn      = Xn;         % значение переменной
       obj.Mlinlnm = Mlinlnm;    % функции принадлежности
       
-      In = Xn.*Mlinlnm;
+      In = Xn .* Mlinlnm;
       for nX=1:obj.N
           neuron = Nneuron;
           obj.nneuron{nX} = neuron;
           obj.nneuron{nX} = Ninit(obj.nneuron{nX},obj.Xn(nX),obj.Xn);
       end
+      obj.out =  zeros(1,obj.N);
     end %function
     
     function obj = nnlayerStart(obj,Xn)
