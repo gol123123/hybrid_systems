@@ -54,5 +54,15 @@ classdef Mfrevnlayer
         end 
        end
     end %function
+    
+    function obj = mfrevnlayernewparam(obj,new_param)
+        obj.param =new_param;
+        for nX=1:length(obj.Xn)
+            for nMF=1:obj.N
+                obj.mfrevneuron{nMF,nX} = mfrevnewparam(obj.mfrevneuron{nMF,nX},obj.param{nMF,nX});
+            end
+        end
+    end
+        
   end
 end

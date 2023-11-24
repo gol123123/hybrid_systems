@@ -106,7 +106,7 @@ MFREV_layer.out
 Y = sum(MFREV_layer.out .* N_layer.out)
 
 %% ANFIS test
-Qin        = [1 2];        
+Qin        = [3 2];        
 MFQin = {@gaussmf    @sigmf
          @gaussmf    @sigmf};   
 MFQinparam = {[0.1 0.5   1 1.5] [0.1 0.5]
@@ -124,5 +124,9 @@ MlinkorMandMor = [1 1
 
 net = ANFIS
 net = ANFISnet(net,Qin,MFQin,MFQinparam,Qout,MFRQout,MFRQinparam,Mand,Mor,MlinkandQinMand,MlinkorMandMor)
-net = simANFIS(net,Qin)
+net = simANFIS(net,Qin);
+net.Qout
+Yn = 2;
+net = trainANFIS(net,Qin,Yn);
+net = simANFIS(net,Qin);
 net.Qout

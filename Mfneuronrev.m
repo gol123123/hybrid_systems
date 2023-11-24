@@ -20,10 +20,13 @@ classdef Mfneuronrev
           obj.level =  level;
         end
         mf_out = obj.MF(range,obj.param);
-        plot(range,mf_out)
         MK = 100;
         [~, ind] = min(abs((mf_out-obj.level).*MK));
         obj.out = range(ind);
     end %function
+    
+    function obj = mfrevnewparam(obj,new_param)
+        obj.param =new_param;
+    end
   end
 end

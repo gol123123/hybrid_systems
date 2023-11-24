@@ -21,7 +21,9 @@ classdef ANFIS
     MFrev_layer     = 0; % слой обратный ФП-нейрон 
     range           = 0; % диапазон ФП 
     W               =[]; % весовая матрица для нормализирующего слоя 
-
+    learn           = 0; % скорость обучения
+    e               = 0; % ошибка
+    set_e           = 0; % устанавливаение минимальной ошибки
   end
 
   methods
@@ -53,6 +55,8 @@ classdef ANFIS
           obj.mf_size         = size(obj.MFQin);
           obj.mfrev_size      = size(obj.MFRQout);
           obj.Typelayer       = "and";
+          obj.learn           = 0.01; 
+          obj.set_e           = 0.01; 
           %% создаёс слои нейронов
           layer = Mfnlayer;
           obj.MF_layer = layer;
@@ -117,8 +121,8 @@ classdef ANFIS
                                             );% инициализация слоя
                  
     end %function
-    
-    function obj = simANFIS(obj,Xn)
+        
+        function obj = simANFIS(obj,Xn)
         if(length(Xn) > length(obj.Qin))
             obj.Qin = Xn(1:length(obj.Qin));
         elseif (length(Xn) < length(obj.Qin))
@@ -130,7 +134,7 @@ classdef ANFIS
             obj.Qin = Xn;
         end
         
-        obj.MF_layer = mfnlayerStart(obj.MF_layer,obj.Qin)% инициализация нейрона 
+        obj.MF_layer = mfnlayerStart(obj.MF_layer,obj.Qin);% инициализация нейрона 
        
         if((obj.Typelayer == "and")|| (obj.Typelayer == "and_or"))  
         obj.AND_layer = andnlayerStart(obj.AND_layer,obj.MF_layer.out);% инициализация нейрона
@@ -149,6 +153,38 @@ classdef ANFIS
         obj.MFrev_layer = mfrevnlayerStart(obj.MFrev_layer,MFREV_in);% инициализация нейрона
         
         obj.Qout  = sum(obj.MFrev_layer.out .* obj.N_layer.out);
+    end %function
+        
+    function obj = trainANFIS(obj,Xn,Yn)
+        obj.e = 0.5*(Yn-obj.Qout).^2;
+        while(obj.set_e < obj.e)
+            
+            MF_size = size(obj.MFQinparam);
+            MFR_size= size(obj.MFRQinparam);
+            
+            for i=1:MFR_size(1)
+                for j=1:MFR_size(2)
+                    for k=1:length(obj.MFRQinparam{i,j})
+                        obj.MFRQinparam{i,j}(k) = obj.MFRQinparam{i,j}(k) + obj.learn*(Yn-obj.Qout);
+                    end
+                end
+            end
+            
+            for i=1:MF_size(1)
+                for j=1:MF_size(2)
+                    for k=1:length(obj.MFQinparam{i,j})
+                        obj.MFQinparam{i,j}(k) = obj.MFQinparam{i,j}(k) + obj.learn*(Yn-obj.Qout);
+                    end
+                end
+            end
+            
+            obj.MFrev_layer = mfrevnlayernewparam(obj.MFrev_layer,obj.MFRQinparam);
+            obj.MF_layer = mfnlayernewparam(obj.MF_layer,obj.MFQinparam);
+            
+            obj = simANFIS(obj,Xn);
+            obj.e = 0.5*(Yn-obj.Qout).^2;
+            obj.e
+        end
     end %function
   end
 end

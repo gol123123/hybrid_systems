@@ -58,6 +58,15 @@ classdef Mfnlayer
             figure(nX+1);
         end
     end %function
+    
+    function obj = mfnlayernewparam(obj,new_param)
+        obj.param =new_param;
+        for nX=1:length(obj.Xn)
+          for nMF=1:obj.N
+              obj.mfneuron{nMF,nX} = mfnewparam(obj.mfneuron{nMF,nX},obj.param{nMF,nX});
+          end
+        end 
+    end
   end
 end
 

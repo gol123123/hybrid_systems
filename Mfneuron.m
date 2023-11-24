@@ -24,5 +24,9 @@ classdef Mfneuron
         x = 0:0.1:20;
         plot(x, obj.MF(x, obj.param));
     end %function
+    
+    function obj = mfnewparam(obj,new_param)
+        obj.param =new_param;
+    end
   end
 end
