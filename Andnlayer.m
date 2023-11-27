@@ -48,7 +48,7 @@ classdef Andnlayer
         end
         
           for nAND=1:obj.M
-              obj.andn{nAND} = andneuron(obj.andn{nAND},obj.in(nAND,:))
+              obj.andn{nAND} = andneuron(obj.andn{nAND},obj.in(nAND,:));
               obj.out(nAND) = obj.andn{nAND}.out;
           end     
     end %function

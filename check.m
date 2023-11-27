@@ -106,27 +106,63 @@ MFREV_layer.out
 Y = sum(MFREV_layer.out .* N_layer.out)
 
 %% ANFIS test
-Qin        = [3 2];        
-MFQin = {@gaussmf    @sigmf
-         @gaussmf    @sigmf};   
-MFQinparam = {[0.1 0.5   1 1.5] [0.1 0.5]
-              [0.4 0.8 1.3 1.9] [1   1.5]  };     
+clear all
+Qin        = [4];        
+MFQin = {@gaussmf
+         @gaussmf
+         @gaussmf};   
+MFQinparam = {[3 0]
+              [3 6]
+              [3 9]};     
 Qout  = [0];    
-MFRQout   = {@sigmf @sigmf};      
-MFRQinparam = {[1 6] [2 9]};   
+MFRQout   = {@gaussmf  @gaussmf};      
+MFRQinparam = {[3 0] [3 6]};   
 Mand        = 2 ;    
 Mor         = 2;           
-MlinkandQinMand = [1 1
-                   1 1];
-MlinkorMandMor = [1 1
-                  1 1];  
-       
-
-net = ANFIS
+MlinkandQinMand = [1
+                   1
+                   1];
+MlinkorMandMor = [1 
+                  1 ];  
+              
+net = ANFIS;
 net = ANFISnet(net,Qin,MFQin,MFQinparam,Qout,MFRQout,MFRQinparam,Mand,Mor,MlinkandQinMand,MlinkorMandMor)
 net = simANFIS(net,Qin);
+
+for i=1:10
+Qin = [i]; 
+net = simANFIS(net,Qin);
+a(i) = net.Qout;
+end
+plot(a)
+i = 1:10;
+k=1:20;
+surf(k,i,a);
+figure(2)
+for i=1:4
+    Qin = [i];
+    Yn = 2*i+1;
+    net = trainANFIS(net,Qin,Yn);
+end
+
+for i=1:10
+    Qin = [i];
+    net = simANFIS(net,Qin);
+    b(i) = net.Qout;
+end
+plot(b)
+i = 1:10;
+k=1:20;
+surf(k,i,b);
+Qin = [3 1 1]; 
+net = simANFIS(net,Qin);
 net.Qout
-Yn = 2;
-net = trainANFIS(net,Qin,Yn);
+
+i = 1:10;
+k=1:20;
+z = i+k-k;
+surf(k,i,z);
+
+Qin = [3 1 4]; 
 net = simANFIS(net,Qin);
 net.Qout

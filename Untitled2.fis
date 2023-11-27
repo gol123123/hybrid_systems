@@ -1,0 +1,38 @@
+[System]
+Name='Untitled2'
+Type='sugeno'
+Version=2.0
+NumInputs=2
+NumOutputs=1
+NumRules=0
+AndMethod='prod'
+OrMethod='probor'
+ImpMethod='prod'
+AggMethod='sum'
+DefuzzMethod='wtaver'
+
+[Input1]
+Name='input1'
+Range=[0 1]
+NumMFs=3
+MF1='mf1':'trimf',[-0.416666666666667 0 0.416666666666667]
+MF2='mf2':'trimf',[0.0833333333333333 0.5 0.916666666666667]
+MF3='mf3':'trimf',[0.583333333333333 1 1.41666666666667]
+
+[Input2]
+Name='input2'
+Range=[1 2]
+NumMFs=3
+MF1='mf1':'trapmf',[0.625 0.9583 1.042 1.375]
+MF2='mf2':'trimf',[1.083 1.5 1.917]
+MF3='mf3':'trimf',[1.583 2 2.417]
+
+[Output1]
+Name='output1'
+Range=[0 1]
+NumMFs=3
+MF1='mf1':'constant',[0]
+MF2='mf2':'constant',[0.5]
+MF3='mf3':'constant',[1]
+
+[Rules]

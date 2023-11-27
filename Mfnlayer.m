@@ -31,7 +31,7 @@ classdef Mfnlayer
               obj.mfneuron{nMF,nX} = mfinit(obj.mfneuron{nMF,nX},obj.Xn(nX),obj.MFn{nMF,nX}, obj.param{nMF,nX});
           end
       end
-      obj.out =  zeros(obj.N);
+      obj.out =  zeros(length(obj.Xn),obj.N);
     end %function
     
     function obj = mfnlayerStart(obj,Xn)
@@ -44,7 +44,7 @@ classdef Mfnlayer
         for nX=1:length(obj.Xn)
           for nMF=1:obj.N
               obj.mfneuron{nMF,nX} = mfneuron(obj.mfneuron{nMF,nX},obj.Xn(nX));
-              obj.out(nMF,nX) = obj.mfneuron{nMF,nX}.out;
+              obj.out(nX,nMF) = obj.mfneuron{nMF,nX}.out;
           end
         end     
     end %function
@@ -55,8 +55,10 @@ classdef Mfnlayer
                 mfPlot(obj.mfneuron{nMF,nX});
                 hold on
             end
-            figure(nX+1);
         end
+        hold off
+        
+        
     end %function
     
     function obj = mfnlayernewparam(obj,new_param)

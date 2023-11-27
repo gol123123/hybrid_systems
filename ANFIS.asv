@@ -24,6 +24,8 @@ classdef ANFIS
     learn           = 0; % скорость обучения
     e               = 0; % ошибка
     set_e           = 0; % устанавливаение минимальной ошибки
+    typemetod       = 0; % тип алгоритма
+    Sugeno          = 0;
   end
 
   methods
@@ -51,10 +53,12 @@ classdef ANFIS
           obj.MFQinparam      = MFQinparam     ;
           obj.MFRQinparam     = MFRQinparam    ;
           obj.TypefunTS_and_or= [1 6]          ;
-          obj.range           = -5:0.001:10    ;
+          obj.range           = 0:0.001:10    ;
           obj.mf_size         = size(obj.MFQin);
           obj.mfrev_size      = size(obj.MFRQout);
           obj.Typelayer       = "and";
+          obj.typemetod       = "Sugeno";
+          obj.Sugeno          = struct('b',{},'b0',{});
           obj.learn           = 0.1; 
           obj.set_e           = 0.01; 
           %% создаёс слои нейронов
@@ -92,6 +96,8 @@ classdef ANFIS
                                         obj.MlinkandQinMand,... % матрица связи  входов и И-нейронов
                                         obj.TypefunTS_and_or... % тип T-нормы и S-канормы для И-нейронов и ИЛИ-нейронов
                                        );% инициализация слоя
+                                    N_layer_in = obj.AND_layer.out;
+                                    MFREV_in = obj.AND_layer.out;
           end
           
           if((obj.Typelayer == 'or')|| (obj.Typelayer == 'and_or'))
@@ -100,42 +106,50 @@ classdef ANFIS
                                       obj.MlinkandQinMand,... % матрица связи  входов и ИЛИ-нейронов
                                       obj.TypefunTS_and_or... % тип T-нормы и S-канормы для И-нейронов и ИЛИ-нейронов
                                      );% инициализация слоя
+                                 N_layer_in = obj.OR_layer.out;
+                                 MFREV_in = obj.OR_layer.out;
           end
           
           if isempty(obj.W)
-          obj.W  = zeros(length(obj.AND_layer.out),length(obj.AND_layer.out))+1;  % инициализация весовой матрицы 
+          obj.W  = zeros(length(N_layer_in),length(N_layer_in))+1;  % инициализация весовой матрицы 
 %           obj.W = w;
           end
           
           obj.N_layer = nnlayerinit(obj.N_layer,     ... % объект нейросети
-                                    obj.AND_layer.out,... % матрица значений на входе слоя
+                                    N_layer_in,... % матрица значений на входе слоя
                                     obj.W            ... % объект нейросети
                                     );% инициализация слоя
                                 
           obj.MFrev_layer = mfrevnlayerinit(obj.MFrev_layer,  ... % объект нейросети
                                             obj.mfrev_size(1),... % количество ФП на переменную
-                                            obj.AND_layer.out,... % матрица значений на входе слоя
+                                            MFREV_in,... % матрица значений на входе слоя
                                             obj.MFRQout,      ... % матрица обратных ФП
                                             obj.MFRQinparam,  ... % матрица параметров обратных ФП
                                             obj.range         ... % объект нейросети
                                             );% инициализация слоя
-                 
+        if(obj.typemetod == "Sugeno")
+            stract.b0 = 1;
+            for nn=1:length(obj.Qin)
+                stract.b(nn) = 1;
+            end
+            obj.Sugeno = stract;
+        end
     end %function
         
-        function obj = simANFIS(obj,Xn)
+    function obj = simANFIS(obj,Xn)
         if(length(Xn) > length(obj.Qin))
             obj.Qin = Xn(1:length(obj.Qin));
         elseif (length(Xn) < length(obj.Qin))
             obj.Qin = obj.Qin*0;
-            for i=1:length(obj.Qin)
-                obj.Qin(i) = Xn(i);
+            for K=1:length(obj.Qin)
+                obj.Qin(K) = Xn(K);
             end
         else
             obj.Qin = Xn;
         end
         
-        obj.MF_layer = mfnlayerStart(obj.MF_layer,obj.Qin)% инициализация нейрона 
-       
+        obj.MF_layer = mfnlayerStart(obj.MF_layer,obj.Qin);% инициализация нейрона
+        
         if((obj.Typelayer == "and")|| (obj.Typelayer == "and_or"))  
         obj.AND_layer = andnlayerStart(obj.AND_layer,obj.MF_layer.out);% инициализация нейрона
         N_in = obj.AND_layer.out;
@@ -150,40 +164,77 @@ classdef ANFIS
         
         obj.N_layer = nnlayerStart(obj.N_layer,N_in);
         
+        if(obj.typemetod == "Tsukamoto")
         obj.MFrev_layer = mfrevnlayerStart(obj.MFrev_layer,MFREV_in);% инициализация нейрона
-        
-        obj.Qout  = sum(obj.MFrev_layer.out .* obj.N_layer.out);
+        obj.Qout  = sum(obj.MFrev_layer.out.* obj.N_layer.out);
+        elseif(obj.typemetod == "Sugeno")
+            for i=1:numpravil
+           f_conclusion(i) = obj.Sugeno.b0{i} + sum(obj.Sugeno.b{i}*obj.Qin);
+            end
+           obj.Qout  = sum(obj.N_layer.out.*f_conclusion);
+           
+        end
+
+              
+        if(0)
+        obj.MFrev_layer.mfrevnlayerplot();
+        figure(2)
+        obj.MF_layer.mfnlayerplot();
+        end
     end %function
         
     function obj = trainANFIS(obj,Xn,Yn)
         obj.e = 0.5*(Yn-obj.Qout).^2;
+        num =0;
         while(obj.set_e < obj.e)
+            
+            if(obj.typemetod == "Sugeno")
+                for i =1:numpravil
+                    obj.Sugeno.b0{i} = obj.Sugeno.b0{i}-obj.learn*2*(Yn-obj.Qout)*obj.N_layer.out(i);
+                    for j = 1:(length(obj.Sugeno.b))
+                        obj.Sugeno.b{i}(i) = obj.Sugeno.b{i}(i)-obj.learn*2*(Yn-obj.Qout)*obj.N_layer.out(i)*obj.Qin(j);
+                    end
+                end
+            end
+            
+            
             
             MF_size = size(obj.MFQinparam);
             MFR_size= size(obj.MFRQinparam);
             
-            for i=1:MFR_size(1)
-                for j=1:MFR_size(2)
-                    for k=1:length(obj.MFRQinparam{i,j})
-                        obj.MFRQinparam{i,j}(k) = obj.MFRQinparam{i,j}(k) + obj.learn*(Yn-obj.Qout);
+            for i=1:MFR_size(1) % количество строк
+                for j=1:MFR_size(2) % количество столбцов
+                    for k=1:length(obj.MFRQinparam{i,j})  % длинна элемента
+                         n =  obj.MFrev_layer.mfrevneuron{i,j};
+                         na = mfrev(n, obj.MFRQinparam{i,j}(k));
+                         if(na == Inf) na = obj.range(end); end
+                        obj.MFRQinparam{i,j}(k) = obj.MFRQinparam{i,j}(k) -obj.learn*(Yn-obj.Qout);
                     end
                 end
             end
-            
+           
             for i=1:MF_size(1)
                 for j=1:MF_size(2)
                     for k=1:length(obj.MFQinparam{i,j})
-                        obj.MFQinparam{i,j}(k) = obj.MFQinparam{i,j}(k) + obj.learn*(Yn-obj.Qout);
+                         n =  obj.MF_layer.mfneuron{i,j};
+                         na = mf(n, obj.MFQinparam{i,j}(k));
+                         if(na == Inf) na = obj.range(end); end
+                         obj.MFQinparam{i,j}(k) = obj.MFQinparam{i,j}(k) - obj.learn*(na-Yn);
                     end
                 end
             end
             
-            obj.MFrev_layer = mfrevnlayernewparam(obj,new_param);
-            obj = mfnlayernewparam(obj,new_param);
+            obj.MFrev_layer = mfrevnlayernewparam(obj.MFrev_layer,obj.MFRQinparam);
+            obj.MF_layer = mfnlayernewparam(obj.MF_layer,obj.MFQinparam);
             
             obj = simANFIS(obj,Xn);
-            obj.Qout
             obj.e = 0.5*(Yn-obj.Qout).^2;
+            disp('e')
+            obj.e
+            num = num +1;
+            if(num == 100)
+               break
+            end
         end
     end %function
   end

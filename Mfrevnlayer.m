@@ -33,8 +33,7 @@ classdef Mfrevnlayer
       for nX=1:length(obj.Xn)
           for nMF=1:obj.N
               neuron = Mfneuronrev;
-              obj.mfrevneuron{nMF,nX} = neuron;
-              
+              obj.mfrevneuron{nMF,nX} = neuron; 
               obj.mfrevneuron{nMF,nX} = Mfrevinit(obj.mfrevneuron{nMF,nX},obj.Xn(nX),obj.MFn{nMF,nX},obj.param{nMF,nX});
           end
       end
@@ -54,7 +53,14 @@ classdef Mfrevnlayer
         end 
        end
     end %function
-    
+    function mfrevnlayerplot(obj)  
+        for nX=1:length(obj.Xn)
+            for nMF=1:obj.N
+                mfrevPlot(obj.mfrevneuron{nMF,nX});
+                hold on
+            end
+        end
+    end %function
     function obj = mfrevnlayernewparam(obj,new_param)
         obj.param =new_param;
         for nX=1:length(obj.Xn)
@@ -62,6 +68,7 @@ classdef Mfrevnlayer
                 obj.mfrevneuron{nMF,nX} = mfrevnewparam(obj.mfrevneuron{nMF,nX},obj.param{nMF,nX});
             end
         end
+        hold off
     end
         
   end
