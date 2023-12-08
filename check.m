@@ -136,21 +136,23 @@ a(i) = net.Qout;
 end
 plot(a)
 i = 1:10;
-k=1:20;
-surf(k,i,a);
 figure(2)
-for i=1:4
-    Qin = [i];
-    Yn = 2*i+1;
+x = 0:0.1:10;
+for i=1:length(x)/1
+    Qin = x(i);
+    Yn = sin(2*x(i))*exp(-0.1*x(i));
     net = trainANFIS(net,Qin,Yn);
 end
-
-for i=1:10
-    Qin = [i];
+x = 0:0.1:10;
+for i=1:length(x)
+    Qin = [x(i)];
     net = simANFIS(net,Qin);
     b(i) = net.Qout;
 end
-plot(b)
+plot(x,b)
+Yn = sin(2*x).*exp(-0.1*x);
+hold on
+plot(x,Yn)
 i = 1:10;
 k=1:20;
 surf(k,i,b);

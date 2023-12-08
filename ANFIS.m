@@ -60,7 +60,7 @@ classdef ANFIS
           obj.typemetod       = "Sugeno";
           obj.Sugeno          = struct('b',{},'b0',{});
           obj.learn           = 0.01; 
-          obj.set_e           = 0.01; 
+          obj.set_e           = 0.001; 
           %% создаёс слои нейронов
           layer = Mfnlayer;
           obj.MF_layer = layer;
@@ -119,7 +119,7 @@ classdef ANFIS
                                     N_layer_in,... % матрица значений на входе слоя
                                     obj.W            ... % объект нейросети
                                     );% инициализация слоя
-                                
+          if(obj.typemetod == "Tsukamoto")                      
           obj.MFrev_layer = mfrevnlayerinit(obj.MFrev_layer,  ... % объект нейросети
                                             obj.mfrev_size(1),... % количество ФП на переменную
                                             MFREV_in,... % матрица значений на входе слоя
@@ -127,6 +127,7 @@ classdef ANFIS
                                             obj.MFRQinparam,  ... % матрица параметров обратных ФП
                                             obj.range         ... % объект нейросети
                                             );% инициализация слоя
+          end
         if(obj.typemetod == "Sugeno")
             stract.b0{1} = 1;
             for nn=1:length(obj.Qin)
@@ -172,14 +173,14 @@ classdef ANFIS
         obj.Qout  = sum(obj.MFrev_layer.out.* obj.N_layer.out);
         elseif(obj.typemetod == "Sugeno")
             for i=1:numpravil
-              f_conclusion(i) = obj.Sugeno.b0{i} + sum(obj.Sugeno.b{i}*obj.Qin);
+              f_conclusion(i) = obj.Sugeno.b0{i} + sum(obj.Sugeno.b{i}*sin(2*obj.Qin)*exp(-0.1*obj.Qin));
             end
            obj.Qout  = sum(obj.N_layer.out.*f_conclusion);
            
         end
 
               
-        if(0)
+        if(1)
         obj.MFrev_layer.mfrevnlayerplot();
         figure(2)
         obj.MF_layer.mfnlayerplot();
@@ -192,6 +193,8 @@ classdef ANFIS
         num =0;
         while(obj.set_e < obj.e)
             numpravil =1;
+            MF_size = size(obj.MFQinparam);
+            
             if(obj.typemetod == "Sugeno")
                 for i =1:numpravil
                     obj.Sugeno.b0{i} = obj.Sugeno.b0{i}-obj.learn*2*(obj.Qout-Yn)*obj.N_layer.out(i);
@@ -199,10 +202,21 @@ classdef ANFIS
                         obj.Sugeno.b{i}(i) = obj.Sugeno.b{i}(i)-obj.learn*(obj.Qout-Yn)*obj.N_layer.out(i)*obj.Qin(j);
                     end
                 end
+                
+                for i=1:MF_size(1)
+                    for j=1:MF_size(2)
+                        for k=1:length(obj.MFQinparam{i,j})
+                            n =  obj.MF_layer.mfneuron{i,j};
+                            na = mf(n, obj.MFQinparam{i,j}(k));
+                            if(na == Inf) na = obj.range(end); end
+                            obj.MFQinparam{i,j}(k) = obj.MFQinparam{i,j}(k) - obj.learn*(na-Yn);
+                        end
+                    end
+                end
+                obj.MF_layer = mfnlayernewparam(obj.MF_layer,obj.MFQinparam);
             end
-            
-            
-        if(0)    
+             
+        if( obj.typemetod == "Tsukamoto"  )    
             MF_size = size(obj.MFQinparam);
             MFR_size= size(obj.MFRQinparam);
             
@@ -217,16 +231,7 @@ classdef ANFIS
                 end
             end
            
-            for i=1:MF_size(1)
-                for j=1:MF_size(2)
-                    for k=1:length(obj.MFQinparam{i,j})
-                         n =  obj.MF_layer.mfneuron{i,j};
-                         na = mf(n, obj.MFQinparam{i,j}(k));
-                         if(na == Inf) na = obj.range(end); end
-                         obj.MFQinparam{i,j}(k) = obj.MFQinparam{i,j}(k) - obj.learn*(na-Yn);
-                    end
-                end
-            end
+
                  
             obj.MFrev_layer = mfrevnlayernewparam(obj.MFrev_layer,obj.MFRQinparam);
             obj.MF_layer = mfnlayernewparam(obj.MF_layer,obj.MFQinparam);
